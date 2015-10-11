@@ -3,6 +3,7 @@
 }
 h1 {
 	color: white;
+	font-size: 4em;
 	
 }
 
@@ -10,6 +11,7 @@ h2 {
 	color: white;
 	font-size: 3em;
 	font-family: 'Oswald', sans-serif;
+	margin-left: 10%;
 }
 body {
 	background-color: #191919;	
@@ -35,7 +37,7 @@ body {
 #console {
 	background-color:#191919; 
 	height: 400px; 
-	width: 800px; 
+	width: 600px; 
 	margin: 0 auto;
 	overflow: auto;
 	color: white;
