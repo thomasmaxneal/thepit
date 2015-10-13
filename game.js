@@ -11,9 +11,7 @@ var cutFinger = false;
 var free = false;
 var pendulum = 0;
 var seeKnife = false;
-var pendulumOff = false;
 var ropeAttached = false;
-
 
 
 //INVENTORY
@@ -25,6 +23,8 @@ var knife = false;
 var piecesOfRope = false;
 var leatherStraps = false;
 var longRope = false;
+var paper = false;
+var bloodiedPaper = false;
 
 
 //FADE IN TEXT
@@ -53,7 +53,7 @@ var messages = {
         "It sounds much like a cave. That or a pit." 
     ),
     lookAroundPitStanding: createPTag(
-    	"Look around standing"
+    	"You need to get off this platform quickly. If only there was a way to lower yourself down."
 
     ),
     awaken: createPTag(
@@ -86,13 +86,24 @@ var messages = {
     cutFreeNotCut: createPTag(
         "You use the sharp edge to cut through the leather straps and the knots in the rope. You are free. <br><br>" +
         "As you stand you notice you are on a raised platform with barely any room to move. The pendulum approaches ever closer. <br><br> " +
-        "As you peer over the edge you cannot tell how far down the drop is. You need to get down off this platform quickly. Its the only away to avoid the blade. If only you had something to lower yourself down with.."
+        "As you peer over the edge you cannot tell how far down the drop is. You need to get down off this platform quickly. Its the only away to avoid the blade. If only there was a way to lower yourself down.."
     ),
     cutFreeCut: createPTag(
         "You use the sharp edge to cut through the leather straps and the knots in the rope. You are free. <br><br>" +
         "As you stand you notice you are on a raised platform with barely any room to move. The pendulum approaches ever closer. <br><br> " +
-        "The room is silent save for the WOOSH WOOSH of the oncoming pendulum blade. As you peer over the edge a drop of blood from your cut fingertip falls and you hear it spash delicately into the water below. The drop cant be more than 15 feet. You need to get down off this platform quickly. Its the only away to avoid the oncomming blade. <br><br>If only you had something to lower yourself down with."
+        "The room is silent save for the WOOSH WOOSH of the oncoming pendulum blade. As you peer over the edge a drop of blood from your cut fingertip falls and you hear it spash delicately into the water below. The drop cant be more than 15 feet. You need to get down off this platform quickly. Its the only away to avoid the oncomming blade. <br><br>If only there was a way to lower yourself down."
     ),
+    useRopeNotTied: createPTag(
+    	"There are several pieces of rope each about 6 feet long. If only they were longer.."
+    ),
+    useRopeTied: createPTag(
+    	"The rope is now long enough to get you down but what will you attach it to?"
+    ),
+    useRopeRings: createPTag(
+    	"You attach one end of the rope to the metal rings bolted to the ground and safely lower yourself down off the platform and out of reach of the pendulum. You are safe for now.<br><br>" +
+    	"As your feet hit the ground you notice you are in water a few inches deep. There is a door with barred windows in front of you. That must be the way out of this chamber."
+    ),
+
     noKnife: createPTag(
         "You have nothing to cut it with."
     ),
@@ -109,7 +120,7 @@ var messages = {
     	"Kinky..."
     ),
     tieRope: createPTag(
-    	"You tie the ends of the rope together to create one long rope. Clever."
+    	"You tie the ends of the rope together to create one long rope. Clever. If only there were something to attach it to."
     ),
     pendulumOne: createPTag(
     	"The pendulum approaches ever closer. It looks sharp."
@@ -144,7 +155,7 @@ var messages = {
     ),
     checkPocketsCut: createPTag(
     	"Your pockets are empty save for a small crumpled paper. <br><br>" +
-    	"It is too dim to read but you are able to make out a large black spot.<br><br>+" +
+    	"It is too dim to read but you are able to make out a large black spot.<br><br>" +
     	"Blood from your cut finger smears the page."
     ),
     checkPocketsNotPit: createPTag(
@@ -188,7 +199,7 @@ var messages = {
 					//LOOK AROUND (different look around cases go here, checking for currentRoom)
 					
 					//LOOK AROUND-NO KNIFE-NOT STANDING
-					else if ((input == "look around" || input === "search" || input === "explore" || input =="explore cave" || input == "explore pit" || input == "look around cave") && knife == false && currentRoom == "The Pit" && standing == false) {
+					else if ((input == "look around" || input === "search" || input === "explore" || input =="explore cave" || input == "explore pit" || input == "look around cave" || input ==="look around ") && knife == false && currentRoom == "The Pit" && standing == false) {
 						fadeInMessage(messages.lookAroundPitNoKnifeNotStanding, 1000);						
 						seeKnife = true;
 					}
@@ -213,6 +224,8 @@ var messages = {
 					// check pockets cut finger
 					else if ((input == "check pockets" || input == "look in pockets" || input == "whats in my pockets" || input == "check pocket")  && cutFinger == true && free == true && currentRoom == "The Pit"){
 						fadeInMessage(messages.checkPocketsCut, 1000);
+						inventory.push("<p>• bloodied paper</p>");
+						bloodiedPaper = true;
 					}
 					// check pockets not in pit
 					else if ((input == "check pockets" || input == "look in pockets" || input == "whats in my pockets" || input == "check pocket") && free == true && currentRoom != "The Pit"){
@@ -221,6 +234,8 @@ var messages = {
 					//check pockets free
 					else if ((input == "check pockets" || input == "look in pockets" || input == "whats in my pockets" || input == "check pocket")  && cutFinger == false && free == true && currentRoom == "The Pit"){
 						fadeInMessage(messages.checkPockets, 1000);
+						inventory.push("<p>• crumpled paper</p>");
+						note = true;
 					}
 
 					//check pockets not free
@@ -305,7 +320,7 @@ var messages = {
 					}
 
 					//GET ROPE
-					else if ((input ==="get rope" || input === "take rope" || input === "grab rope" || input === "pick up rope" || input === "collect rope") && free === true){
+					else if ((input ==="get rope" || input === "take rope" || input === "grab rope" || input === "pick up rope" || input === "collect rope" || input === "grab the rope") && free === true){
 						fadeInMessage(messages.getRope, 1000);
 						inventory.push("<p>• several pieces of rope</p>");
 						piecesOfRope = true;
@@ -325,10 +340,27 @@ var messages = {
 						fadeInMessage(messages.tieRope, 1000);
 						removePiecesOfRope = inventory.indexOf("<p>• several pieces of rope</p>");
 						inventory.splice(removePiecesOfRope, removePiecesOfRope+1);
-						inventory.push("<p>•Long rope</p>");
+						inventory.push("<p>• long rope</p>");
 						longRope = true;
 						
 					}
+
+					else if((input === "use rope" || input ==="lower myself down with rope" || "use the rope" || "lower myself down with the rope") && currentRoom == "The Pit" && piecesOfRope == true && longRope == false) {
+						fadeInMessage(messages.useRopeNotTied, 1000);
+					}
+
+					else if((input === " use rope" || input === "lower myself down with rope" || input === "lower myself down with the rope") && currentRoom == "The Pit" && longRope == true) {
+						fadeInMessage(messages.useRopeTied, 1000);
+					}
+
+					else if ((input === "tie rope to rings" || input === "connect rope to rings" || input === "use rope on rings" || input === "tie rope to the rings" || input === "connect rope to the rings" || input === "attach to rings" || input === "attach rope to rings" || input === "attach rope to the rings" || input === "attach rope to the metal rings" || input === "use rope on metal rings" || input === "tie rope to the metal rings" || input === "tie the rope to the rings" || input === "tie the rope to the metal rings" || input === "connect rope to the metal rings" || input === "attach rope to the metal rings" || input === "use rope on the metal rings") && currentRoom == "The Pit" && longRope == true){
+						fadeInMessage(messages.useRopeRings, 1000);
+						removeLongRope = inventory.indexOf("<p>• long rope</p>");
+						inventory.splice(removeLongRope, removeLongRope+1);
+						currentRoom ="Lower Pit"
+						document.querySelector("#area").innerHTML = "Lower Pit";
+
+					} 
 
 					//GRAB BOARD
 					else if((input === "grab board" || input ==="get board" || input === "pick up board") && free == true){
@@ -338,9 +370,6 @@ var messages = {
 					// CHECK POCKETS
 
 					
-
-
-
 
 
 					//DONT UNDERSTAND INPUT
@@ -400,7 +429,7 @@ var messages = {
 			$("#command_line").val('');
 
 			//DEATH BY PENDULUM too many inccorect inputs
-			if(pendulum > 10 && pendulumOff == false) {
+			if(pendulum > 10 && currentRoom == "The Pit") {
 				death = true;
 
 			//DECLARE DEATH FUNCTION
